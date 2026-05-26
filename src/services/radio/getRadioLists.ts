@@ -6,20 +6,24 @@ interface GetRadioListsParams {
   method?: string;
   params?: Record<string, unknown>;
   option?: AxiosRequestConfig;
+  cookie?: string;
 }
 
 const upstream = '/v8/fcg-bin/fcg_v8_radiolist.fcg';
 
-export default ({ method = 'get', params = {}, option = {} }: GetRadioListsParams) => {
-  const data = Object.assign(params, {
-    format: 'json',
-    outCharset: 'utf-8',
-    channel: 'radio',
-    page: 'index',
-    tpl: 'wk',
-    new: 1,
-    p: Math.round(1),
-  });
+export default ({ method = 'get', params = {}, option = {}, cookie }: GetRadioListsParams) => {
+  const data = Object.assign(
+    {
+      format: 'json',
+      outCharset: 'utf-8',
+      channel: 'radio',
+      page: 'index',
+      tpl: 'wk',
+      new: 1,
+      p: 1,
+    },
+    params,
+  );
   const options = Object.assign(option, {
     params: data,
   });
@@ -28,6 +32,7 @@ export default ({ method = 'get', params = {}, option = {} }: GetRadioListsParam
     url: upstream,
     method,
     options,
+    cookie,
   })
     .then((res: import('axios').AxiosResponse<any>) => {
       const response = res.data;

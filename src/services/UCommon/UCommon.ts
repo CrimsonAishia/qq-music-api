@@ -5,9 +5,10 @@ interface UCommonParams {
   method?: string;
   params?: Record<string, unknown>;
   option?: AxiosRequestConfig;
+  cookie?: string;
 }
 
-export default ({ method = 'get', params = {}, option = {} }: UCommonParams) => {
+export default ({ method = 'get', params = {}, option = {}, cookie }: UCommonParams) => {
   const options = Object.assign(option, { params });
-  return u_common({ method, options });
+  return u_common({ method, options, cookie });
 };

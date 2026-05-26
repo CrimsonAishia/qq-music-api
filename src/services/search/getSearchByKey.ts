@@ -1,6 +1,7 @@
 import { AxiosRequestConfig } from 'axios';
 import { logServiceFailure, logServiceRequest, logServiceSuccess } from '../../util/observability';
-import y_common from '../y_common';
+import { formatSearchResult } from '../../util/searchFormatter';
+import u_common from '../u_common';
 
 interface GetSearchByKeyParams {
   method?: string;
@@ -8,50 +9,72 @@ interface GetSearchByKeyParams {
   option?: AxiosRequestConfig;
 }
 
-const upstream = '/soso/fcgi-bin/client_search_cp';
+const upstream = 'u.y.qq.com/cgi-bin/musicu.fcg';
 
-export default ({ method = 'get', params = {}, option = {} }: GetSearchByKeyParams) => {
-  const data = Object.assign(params, {
-    format: 'json',
-    outCharset: 'utf-8',
-    ct: 24,
-    qqmusic_ver: 1298,
-    new_json: 1,
-    remoteplace: 'txt.yqq.song',
-    // searchid: 58932895599763136,
-    t: 0,
-    aggr: 1,
-    cr: 1,
-    lossless: 0,
-    flag_qc: 0,
-    platform: 'yqq.json',
-  });
-  const options = Object.assign(option, {
-    params: data,
-  });
-  logServiceRequest('getSearchByKey', upstream, data);
-  return y_common({
-    url: upstream,
-    method,
+export default ({ params = {} }: GetSearchByKeyParams) => {
+  const {
+    w,
+    n = 10,
+    p = 1,
+    t = 0,
+  } = params as {
+    w?: string;
+    n?: number;
+    p?: number;
+    t?: number;
+  };
+
+  const searchType = Number(t);
+
+  const requestData = {
+    'music.search.SearchCgiService': {
+      module: 'music.search.SearchCgiService',
+      method: 'DoSearchForQQMusicDesktop',
+      param: {
+        search_type: searchType,
+        query: w,
+        page_num: Number(p),
+        num_per_page: Number(n),
+      },
+    },
+  };
+
+  logServiceRequest('getSearchByKey', upstream, requestData);
+
+  const options: AxiosRequestConfig = {
+    data: requestData,
+    headers: {
+      'Content-Type': 'application/json',
+      Referer: 'https://y.qq.com/',
+    },
+  };
+
+  return u_common({
+    method: 'post',
     options,
   })
     .then((res: import('axios').AxiosResponse<any>) => {
       const response = res.data;
       logServiceSuccess('getSearchByKey', upstream, response, {
-        keyword: typeof data.w === 'string' ? data.w : undefined,
+        keyword: typeof w === 'string' ? w : undefined,
       });
+
+      // 格式化搜索结果
+      const formatted = formatSearchResult(response, searchType);
+
       return {
         status: 200,
         body: {
-          response,
+          ...formatted,
         },
       };
     })
     .catch((error: unknown) => {
-      logServiceFailure('getSearchByKey', upstream, error, data);
+      logServiceFailure('getSearchByKey', upstream, error, requestData);
       return {
         status: 500,
         body: {
+          code: -1,
           error,
         },
       };

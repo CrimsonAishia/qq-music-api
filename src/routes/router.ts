@@ -67,7 +67,8 @@ router.get('/getSingerDesc/:singermid?', context.getSingerDesc);
 router.get('/getSingerStarNum/:singermid?', context.getSingerStarNum);
 
 // radio
-router.get('/getRadioLists', context.getRadioLists);
+router.get('/getRadioLists/:id?/:p?', context.getRadioLists);
+router.get('/getRadioSongs/:id/:num?', context.getRadioSongs);
 
 // DigitalAlbum
 router.get('/getDigitalAlbumLists', context.getDigitalAlbumLists);

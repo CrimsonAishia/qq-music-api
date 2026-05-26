@@ -5,6 +5,9 @@ const { UCommon } = services;
 import { Context } from 'koa';
 
 export default async (ctx: Context) => {
+  // 推荐内容与用户关联，使用用户自己的 cookie
+  const userCookie = ctx.state.userCookie || '';
+
   const data = {
     comm: {
       ct: 24,
@@ -75,6 +78,7 @@ export default async (ctx: Context) => {
     method: 'get',
     params,
     option: {},
+    cookie: userCookie, // 使用用户自己的 cookie
   };
   await UCommon(props)
     .then((res: import('axios').AxiosResponse<any>) => {

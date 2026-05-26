@@ -8,9 +8,9 @@ describe('GET /getAlbumInfo', () => {
     const response = await request(server).get('/getAlbumInfo');
     expect(response.status).toBe(400);
     expect(response.body).toEqual({
-      data: {
-        message: 'no albummid',
-      },
+      code: 400,
+      data: null,
+      message: 'no albummid',
     });
   });
 

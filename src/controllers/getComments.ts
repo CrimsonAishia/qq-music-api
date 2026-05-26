@@ -19,9 +19,12 @@ export default async (ctx: Context) => {
     cmd = 8,
     reqtype = 2,
     biztype = 1,
-    rootcommentid = !pagenum && '',
-  } = ctx.query;
-  const checkrootcommentid = !pagenum ? true : !!rootcommentid;
+    rootcommentid = '',
+  } = ctx.params as Record<string, string>;
+  const pageNumValue = Number(pagenum);
+  const checkrootcommentid = pageNumValue === 0 ? true : !!rootcommentid;
+  // 评论列表使用用户自己的 cookie（登录后可看到自己的评论状态）
+  const userCookie = ctx.state.userCookie || '';
 
   const params = Object.assign({
     cid,
@@ -37,6 +40,7 @@ export default async (ctx: Context) => {
     method: 'get',
     params,
     option: {},
+    cookie: userCookie,
   };
   if (id && checkrootcommentid) {
     const { status, body } = await getComments(props);

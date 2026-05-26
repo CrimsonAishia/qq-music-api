@@ -71,4 +71,5 @@ export const defaultConfig: Partial<AppConfig> = {
     cookieList,
     cookieObject,
   },
+  vipUser: undefined,
 };

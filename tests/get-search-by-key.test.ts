@@ -37,8 +37,8 @@ describe('GET /getSearchByKey', () => {
   it('正常流程: 验证接口能否正确返回业务数据', async () => {
     const response = await request(server).get('/getSearchByKey?key=周杰伦&limit=20&page=1');
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('response');
-    expect(response.body.response.code).toBe(0);
+    expect(response.body).toHaveProperty('code', 0);
+    expect(response.body).toHaveProperty('data');
     expect(mockGetSearchByKey).toHaveBeenCalledWith(
       expect.objectContaining({
         params: expect.objectContaining({
@@ -55,7 +55,7 @@ describe('GET /getSearchByKey', () => {
   it('边界条件: 极限值 page=99999 或 limit=0', async () => {
     const response = await request(server).get('/getSearchByKey?key=周杰伦&limit=0&page=99999');
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('response');
+    expect(response.body).toHaveProperty('code', 0);
     expect(mockGetSearchByKey).toHaveBeenCalledWith(
       expect.objectContaining({
         params: expect.objectContaining({

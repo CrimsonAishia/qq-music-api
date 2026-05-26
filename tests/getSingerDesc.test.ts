@@ -8,8 +8,9 @@ describe('GET /getSingerDesc', () => {
     const response = await request(server).get('/getSingerDesc');
     expect(response.status).toBe(400);
     expect(response.body).toEqual({
-      status: 400,
-      response: 'no singermid',
+      code: 400,
+      data: null,
+      message: 'no singermid',
     });
   });
 

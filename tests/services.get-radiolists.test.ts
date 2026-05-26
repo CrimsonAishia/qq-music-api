@@ -44,7 +44,7 @@ describe('services/getRadioLists', () => {
       method: 'get',
       options: {
         params: {
-          p: 1,
+          p: 3,
           format: 'json',
           outCharset: 'utf-8',
           channel: 'radio',
@@ -53,6 +53,7 @@ describe('services/getRadioLists', () => {
           new: 1,
         },
       },
+      cookie: undefined,
     });
     expect(result).toEqual({
       status: 200,
@@ -72,7 +73,7 @@ describe('services/getRadioLists', () => {
       'service.succeeded',
       expect.objectContaining({
         service: 'getRadioLists',
-        page: 1,
+        page: 3,
       }),
     );
   });

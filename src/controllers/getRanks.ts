@@ -3,29 +3,22 @@ import services from '../services';
 const { UCommon } = services;
 
 import { Context } from 'koa';
-import moment from 'moment';
 import { commonParams } from '../config';
-import { getTypedQuery } from '../types/core/request';
-
-interface RanksQuery {
-  topId?: string | number;
-  limit?: string | number;
-  page?: string | number;
-  period?: string;
-}
 
 export default async (ctx: Context) => {
   // Desc: https://github.com/Rain120/qq-music-api/issues/14
   // 1. topId is useless
   // 2. qq api period is change not YYYY-MM-DD
-  const query = getTypedQuery<RanksQuery>(ctx);
-  const topId = +(query.topId || 4);
-  const num = +(query.limit || 20);
-  const offset = +(query.page || 0);
-  const date = query.period || moment().format('YYYY-MM-DD');
-  const week = moment(date).isoWeek();
-  const year = moment(date).year();
-  const period = `${year}_${week}`;
+  const {
+    topId: topIdStr,
+    limit: limitStr,
+    page: pageStr,
+    period: periodStr,
+  } = ctx.params as Record<string, string>;
+  const topId = +(topIdStr || 4);
+  const num = +(limitStr || 20);
+  const offset = +(pageStr || 0);
+  const period = periodStr || '';
 
   const data = {
     comm: {

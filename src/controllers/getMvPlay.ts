@@ -4,9 +4,13 @@ const { UCommon } = services;
 
 // vid=u00222le4ox
 import { Context } from 'koa';
+import { vipUserInfo } from '../config';
 
 export default async (ctx: Context) => {
-  const { vid } = ctx.query;
+  const { vid } = ctx.params;
+  // MV 播放链接使用固定 VIP 账号（高清需要会员权限）
+  const vipCookie = vipUserInfo?.cookie || '';
+
   const data = {
     comm: {
       ct: 24,
@@ -82,6 +86,7 @@ export default async (ctx: Context) => {
     method: 'get',
     params,
     option: {},
+    cookie: vipCookie, // 使用固定 VIP 账号的 cookie
   };
   if (vid) {
     await UCommon(props)

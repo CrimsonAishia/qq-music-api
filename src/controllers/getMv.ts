@@ -7,7 +7,12 @@ import { Context } from 'koa';
 
 export default async (ctx: Context) => {
   // BUGFIX: https://github.com/Rain120/qq-music-api/issues/16#issuecomment-638230301
-  const { area_id = 15, version_id = 7, limit = 20, page = 0 } = ctx.query;
+  const {
+    area_id = 15,
+    version_id = 7,
+    limit = 20,
+    page = 0,
+  } = ctx.params as Record<string, string>;
   const start = (+page ? +page - 1 : 0) * +limit;
   const data = {
     comm: {

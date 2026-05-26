@@ -12,6 +12,7 @@ import {
   apiExplorerMetadata,
 } from './config/apiExplorer';
 import cors from './middlewares/koa-cors';
+import responseFormatter from './middlewares/responseFormatter';
 import router from './routes/router';
 import cookie from './util/cookie';
 import { logger, loggerState } from './util/logger';
@@ -156,6 +157,9 @@ app.use(async (ctx: Koa.Context, next: Koa.Next) => {
   const ms = Date.now() - start;
   ctx.set('X-Response-Time', `${ms}ms`);
 });
+
+// 统一响应格式化
+app.use(responseFormatter());
 
 app.use(router.routes()).use(router.allowedMethods());
 

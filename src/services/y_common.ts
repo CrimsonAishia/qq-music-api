@@ -9,13 +9,24 @@ export default ({
   method = 'get',
   options = {},
   hasCommonParams = true,
-}: BaseYCommonParams) => {
+  cookie,
+}: BaseYCommonParams & { cookie?: string }) => {
   const commonParams = hasCommonParams ? apiConfig.commonParams : {};
+
+  const customHeaders: Record<string, string> = {
+    referer: requestConfig.referer.c,
+    host: 'c.y.qq.com',
+  };
+
+  // 如果传入了 cookie，则附加到上游请求头
+  if (cookie) {
+    customHeaders.Cookie = cookie;
+  }
+
   const opts: AxiosRequestConfig = Object.assign({}, options, commonParams, {
     headers: {
-      referer: requestConfig.referer.c,
-      host: 'c.y.qq.com',
-      ...options.headers,
+      ...customHeaders,
+      ...(options.headers as Record<string, string> | undefined),
     },
   });
   logger.debug(url, { opts });

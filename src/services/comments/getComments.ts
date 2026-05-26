@@ -6,11 +6,12 @@ interface GetCommentsParams {
   method?: string;
   params?: Record<string, unknown>;
   option?: AxiosRequestConfig;
+  cookie?: string;
 }
 
 const upstream = '/base/fcgi-bin/fcg_global_comment_h5.fcg';
 
-export default ({ method = 'get', params = {}, option = {} }: GetCommentsParams) => {
+export default ({ method = 'get', params = {}, option = {}, cookie }: GetCommentsParams) => {
   const data = Object.assign(params, {
     format: 'json',
     outCharset: 'GB2312',
@@ -25,6 +26,7 @@ export default ({ method = 'get', params = {}, option = {} }: GetCommentsParams)
     url: upstream,
     method,
     options,
+    cookie,
   })
     .then((res: import('axios').AxiosResponse<any>) => {
       const response = res.data;

@@ -7,8 +7,8 @@ import { Context } from 'koa';
 import { commonParams } from '../config';
 
 export default async (ctx: Context) => {
-  const song_mid = (ctx.query as Record<string, unknown>).songmid;
-  const song_id = (ctx.query as Record<string, unknown>).songid || '';
+  const song_mid = (ctx.params as Record<string, unknown>).songmid;
+  const song_id = (ctx.params as Record<string, unknown>).songid || '';
 
   const params = Object.assign({}, commonParams, {
     format: 'json',

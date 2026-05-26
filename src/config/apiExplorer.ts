@@ -181,7 +181,13 @@ export const apiExplorerBaseRoutes: ApiExplorerBaseRoute[] = [
     routePath: '/getSingerStarNum/:singermid?',
     category: 'Singer',
   },
-  { name: 'getRadioLists', method: 'GET', routePath: '/getRadioLists', category: 'Radio' },
+  { name: 'getRadioLists', method: 'GET', routePath: '/getRadioLists/:id?/:p?', category: 'Radio' },
+  {
+    name: 'getRadioSongs',
+    method: 'GET',
+    routePath: '/getRadioSongs/:id/:num?',
+    category: 'Radio',
+  },
   {
     name: 'getDigitalAlbumLists',
     method: 'GET',
@@ -267,6 +273,14 @@ export const apiExplorerOverrides: Record<string, Partial<ApiExplorerEndpoint>> 
         placeholder: '1',
         description: 'Current page number.',
         defaultValue: 1,
+      },
+      {
+        key: 't',
+        label: 'Search Type',
+        inputType: 'number',
+        placeholder: '0',
+        description: '0 song, 2 playlist, 7 lyric, 8 album, 9 singer, 12 MV.',
+        defaultValue: 0,
       },
       {
         key: 'catZhida',

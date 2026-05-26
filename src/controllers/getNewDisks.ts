@@ -5,8 +5,8 @@ const { UCommon } = services;
 import { Context } from 'koa';
 
 export default async (ctx: Context) => {
-  const page = +(ctx.query as Record<string, string>).page || 1;
-  const num = +(ctx.query as Record<string, string>).limit || 20;
+  const page = +(ctx.params as Record<string, string>).page || 1;
+  const num = +(ctx.params as Record<string, string>).limit || 20;
   const start = (page - 1) * num;
   const data = {
     new_album: {

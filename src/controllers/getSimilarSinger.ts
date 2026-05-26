@@ -6,7 +6,7 @@ const { getSimilarSinger } = services;
 import { Context } from 'koa';
 
 export default async (ctx: Context) => {
-  const { singermid: singer_mid } = ctx.query;
+  const { singermid: singer_mid } = ctx.params;
   const props = {
     method: 'get',
     params: {

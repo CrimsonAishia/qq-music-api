@@ -8,3 +8,9 @@ node_modules
 .vscode
 coverage/
 .trae/specs
+
+# 用户配置文件（包含敏感 cookie 信息）
+config/vip-user.json
+
+# 测试结果文件
+test-results/

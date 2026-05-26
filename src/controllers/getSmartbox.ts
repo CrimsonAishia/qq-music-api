@@ -5,7 +5,7 @@ const { getSmartbox } = services;
 import { Context } from 'koa';
 
 export default async (ctx: Context) => {
-  const { key } = ctx.query;
+  const { key } = ctx.params;
   const props = {
     method: 'get',
     params: {

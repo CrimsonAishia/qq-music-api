@@ -11,6 +11,7 @@ import y_common from '../y_common';
 
 export interface GetLyricParams extends BaseServiceParams {
   isFormat?: boolean;
+  cookie?: string;
 }
 
 const upstream = '/lyric/fcgi-bin/fcg_query_lyric_new.fcg';
@@ -20,6 +21,7 @@ export default ({
   params = {},
   options = {},
   isFormat = false,
+  cookie,
 }: GetLyricParams): Promise<BaseServiceResponse> => {
   const data = Object.assign(params, {
     format: 'json',
@@ -41,6 +43,7 @@ export default ({
     url: upstream,
     method,
     options: opts,
+    cookie,
   })
     .then((res: import('axios').AxiosResponse<any>) => {
       const lyricString = res.data?.lyric && Buffer.from(res.data.lyric, 'base64').toString();

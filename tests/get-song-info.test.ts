@@ -32,8 +32,8 @@ describe('GET /getSongInfo', () => {
   it('正常流程: 验证接口能否正确返回业务数据', async () => {
     const response = await request(server).get('/getSongInfo?songmid=0039MnYb0qxYhV');
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('response');
-    expect(response.body.response.code).toBe(0);
+    expect(response.body).toHaveProperty('code', 0);
+    expect(response.body).toHaveProperty('data');
   });
 
   it('边界条件: 验证参数为空时的表现', async () => {

@@ -11,5 +11,6 @@ export const _guid = appConfig.api._guid;
 export const options = appConfig.api.options;
 export const optionsPrefix = appConfig.api.optionsPrefix;
 export const userInfo = appConfig.user;
+export const vipUserInfo = appConfig.vipUser;
 
 export { appConfig, configManager };

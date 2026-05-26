@@ -5,7 +5,7 @@ const { getSingerMv } = services;
 import { Context } from 'koa';
 
 export default async (ctx: Context) => {
-  const { singermid, order, num = 5 } = ctx.query;
+  const { singermid, order, num = 5 } = ctx.params as Record<string, string>;
   let params = Object.assign({
     singermid,
     order,

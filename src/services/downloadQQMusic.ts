@@ -7,11 +7,12 @@ interface DownloadQQMusicParams {
   method?: string;
   params?: Record<string, unknown>;
   option?: AxiosRequestConfig;
+  cookie?: string;
 }
 
 const upstream = '/download/download.js';
 
-export default ({ method = 'get', params = {}, option = {} }: DownloadQQMusicParams) => {
+export default ({ method = 'get', params = {}, option = {}, cookie }: DownloadQQMusicParams) => {
   const data = Object.assign(params, {
     format: 'jsonp',
     jsonpCallback: 'MusicJsonCallback',
@@ -21,6 +22,7 @@ export default ({ method = 'get', params = {}, option = {} }: DownloadQQMusicPar
     headers: {
       host: 'y.qq.com',
       referer: requestConfig.referer.y,
+      ...(cookie ? { Cookie: cookie } : {}),
       ...option.headers,
     },
     params: data,

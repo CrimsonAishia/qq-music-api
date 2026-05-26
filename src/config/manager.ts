@@ -4,6 +4,26 @@ import { logger } from '../util/logger';
 import { defaultConfig } from './default';
 import { AppConfig, AppConfigSchema } from './schema';
 
+const VIP_USER_CONFIG_PATH = path.resolve(process.cwd(), 'config/vip-user.json');
+
+/**
+ * 从配置文件加载 VIP 用户信息
+ */
+function loadVipUserFromFile(): { cookie: string; uin: string } | undefined {
+  try {
+    if (fs.existsSync(VIP_USER_CONFIG_PATH)) {
+      const raw = fs.readFileSync(VIP_USER_CONFIG_PATH, 'utf8');
+      const parsed = JSON.parse(raw);
+      if (parsed.cookie && parsed.uin) {
+        return { cookie: parsed.cookie, uin: parsed.uin };
+      }
+    }
+  } catch (error) {
+    // 配置文件读取失败时静默跳过，启动时会有日志提示
+  }
+  return undefined;
+}
+
 export class ConfigManager {
   private static instance: ConfigManager;
   private config: AppConfig;
@@ -29,14 +49,26 @@ export class ConfigManager {
     if (this.isLoaded) return; // 避免重复加载，实现按需加载和缓存机制
 
     try {
+      // 从配置文件加载 VIP 用户信息
+      const vipUser = loadVipUserFromFile();
+
       const mergedConfig = {
         ...this.config,
         ...externalConfig,
+        ...(vipUser ? { vipUser } : {}),
       };
 
       // 通过 Zod 强制进行类型与结构校验
       this.config = AppConfigSchema.parse(mergedConfig);
       this.isLoaded = true;
+
+      if (vipUser) {
+        logger.info('[ConfigManager] VIP user config loaded from config/vip-user.json');
+      } else {
+        logger.warn(
+          '[ConfigManager] VIP user config not found or incomplete. VIP features (play/download/lyric) may be unavailable.',
+        );
+      }
 
       logger.info('[ConfigManager] Config loaded and validated successfully.');
     } catch (error) {

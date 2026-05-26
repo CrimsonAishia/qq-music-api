@@ -15,6 +15,7 @@ import getMvByTag from './getMvByTag';
 import getMvPlay from './getMvPlay';
 import getNewDisks from './getNewDisks';
 import getRadioLists from './getRadioLists';
+import getRadioSongs from './getRadioSongs';
 import getRanks from './getRanks';
 import getRecommend from './getRecommend';
 import getSearchByKey from './getSearchByKey';
@@ -59,6 +60,7 @@ export default {
   getSingerDesc: withControllerLogging('getSingerDesc', getSingerDesc),
   getSingerStarNum: withControllerLogging('getSingerStarNum', getSingerStarNum),
   getRadioLists: withControllerLogging('getRadioLists', getRadioLists),
+  getRadioSongs: withControllerLogging('getRadioSongs', getRadioSongs),
   getDigitalAlbumLists: withControllerLogging('getDigitalAlbumLists', getDigitalAlbumLists),
   getLyric: withControllerLogging('getLyric', getLyric),
   getMusicPlay: withControllerLogging('getMusicPlay', getMusicPlay),

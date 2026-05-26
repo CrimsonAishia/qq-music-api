@@ -11,7 +11,13 @@ import { Context } from 'koa';
 import { commonParams } from '../config';
 
 export default async (ctx: Context) => {
-  const { area = -100, sex = -100, genre = -100, index = -100, page = 1 } = ctx.query;
+  const {
+    area = -100,
+    sex = -100,
+    genre = -100,
+    index = -100,
+    page = 1,
+  } = ctx.params as Record<string, string>;
   const data = {
     comm: {
       ct: 24,

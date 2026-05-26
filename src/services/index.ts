@@ -11,6 +11,7 @@ import getLyric from './music/getLyric';
 import getMvByTag from './mv/getMvByTag';
 // radio
 import getRadioLists from './radio/getRadioLists';
+import getRadioSongs from './radio/getRadioSongs';
 // getTopLists
 import getTopLists from './rank/getTopLists';
 // search
@@ -48,6 +49,7 @@ export default {
   getSingerStarNum,
   // radio
   getRadioLists,
+  getRadioSongs,
   // DigitalAlbum
   getDigitalAlbumLists,
   // music

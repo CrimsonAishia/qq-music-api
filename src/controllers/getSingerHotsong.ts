@@ -1,22 +1,14 @@
 import { Context } from 'koa';
 import services from '../services';
-import { getTypedQuery } from '../types/core/request';
 
 const { UCommon } = services;
 
 // singermid=0025NhlN2yWrP4
 
-interface SingerHotsongQuery {
-  singermid: string;
-  limit?: string | number;
-  page?: string | number;
-}
-
 export default async (ctx: Context) => {
-  const query = getTypedQuery<SingerHotsongQuery>(ctx);
-  const singermid = query.singermid;
-  const num = +(query.limit || 5);
-  const page = +(query.page || 0);
+  const { singermid, limit, page: pageStr } = ctx.params as Record<string, string>;
+  const num = +(limit || 5);
+  const page = +(pageStr || 0);
   const data = {
     comm: {
       ct: 24,

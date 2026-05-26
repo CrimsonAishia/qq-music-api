@@ -5,7 +5,7 @@ const { getSingerDesc } = services;
 import { Context } from 'koa';
 
 export default async (ctx: Context) => {
-  const { singermid } = ctx.query;
+  const { singermid } = ctx.params;
   const props = {
     method: 'get',
     params: {

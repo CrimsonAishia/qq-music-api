@@ -1,8 +1,8 @@
-const mockYCommon = jest.fn();
+const mockUCommon = jest.fn();
 
-jest.mock('../src/services/y_common', () => ({
+jest.mock('../src/services/u_common', () => ({
   __esModule: true,
-  default: mockYCommon,
+  default: mockUCommon,
 }));
 
 jest.mock('../src/util/logger', () => ({
@@ -22,63 +22,60 @@ const mockedLogger = logger as jest.Mocked<typeof logger>;
 
 describe('services/getSearchByKey', () => {
   beforeEach(() => {
-    mockYCommon.mockReset();
+    mockUCommon.mockReset();
     jest.clearAllMocks();
   });
 
-  it('应在成功时返回标准响应并合并默认参数', async () => {
-    mockYCommon.mockResolvedValue({
+  it('应在成功时返回标准响应并构建正确的搜索请求体', async () => {
+    mockUCommon.mockResolvedValue({
       data: {
-        code: 0,
-        data: { list: ['jay'] },
+        'music.search.SearchCgiService': {
+          code: 0,
+          data: { body: { song: { list: ['jay'] } } },
+        },
       },
     });
-
-    const option = {
-      headers: {
-        'x-trace-id': 'trace-1',
-      },
-    };
 
     const result = await getSearchByKey({
-      method: 'post',
       params: {
         w: '周杰伦',
-        remoteplace: 'txt.yqq.custom',
+        n: 20,
+        p: 2,
+        t: 0,
       },
-      option,
     });
 
-    expect(mockYCommon).toHaveBeenCalledWith({
-      url: '/soso/fcgi-bin/client_search_cp',
+    expect(mockUCommon).toHaveBeenCalledWith({
       method: 'post',
       options: {
-        headers: {
-          'x-trace-id': 'trace-1',
+        data: {
+          'music.search.SearchCgiService': {
+            module: 'music.search.SearchCgiService',
+            method: 'DoSearchForQQMusicDesktop',
+            param: {
+              search_type: 0,
+              query: '周杰伦',
+              page_num: 2,
+              num_per_page: 20,
+            },
+          },
         },
-        params: {
-          w: '周杰伦',
-          format: 'json',
-          outCharset: 'utf-8',
-          ct: 24,
-          qqmusic_ver: 1298,
-          new_json: 1,
-          remoteplace: 'txt.yqq.song',
-          t: 0,
-          aggr: 1,
-          cr: 1,
-          lossless: 0,
-          flag_qc: 0,
-          platform: 'yqq.json',
+        headers: {
+          'Content-Type': 'application/json',
+          Referer: 'https://y.qq.com/',
         },
       },
     });
     expect(result).toEqual({
       status: 200,
       body: {
-        response: {
-          code: 0,
-          data: { list: ['jay'] },
+        code: 0,
+        data: {
+          list: expect.any(Array),
+          total: 0,
+          page: 1,
+          pageSize: 1,
+          hasMore: false,
         },
       },
     });
@@ -98,31 +95,34 @@ describe('services/getSearchByKey', () => {
   });
 
   it('应在未传入参数时使用默认值', async () => {
-    mockYCommon.mockResolvedValue({
+    mockUCommon.mockResolvedValue({
       data: {
-        code: 0,
+        'music.search.SearchCgiService': {
+          code: 0,
+        },
       },
     });
 
     await getSearchByKey({});
 
-    expect(mockYCommon).toHaveBeenCalledWith({
-      url: '/soso/fcgi-bin/client_search_cp',
-      method: 'get',
+    expect(mockUCommon).toHaveBeenCalledWith({
+      method: 'post',
       options: {
-        params: {
-          format: 'json',
-          outCharset: 'utf-8',
-          ct: 24,
-          qqmusic_ver: 1298,
-          new_json: 1,
-          remoteplace: 'txt.yqq.song',
-          t: 0,
-          aggr: 1,
-          cr: 1,
-          lossless: 0,
-          flag_qc: 0,
-          platform: 'yqq.json',
+        data: {
+          'music.search.SearchCgiService': {
+            module: 'music.search.SearchCgiService',
+            method: 'DoSearchForQQMusicDesktop',
+            param: {
+              search_type: 0,
+              query: undefined,
+              page_num: 1,
+              num_per_page: 10,
+            },
+          },
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          Referer: 'https://y.qq.com/',
         },
       },
     });
@@ -130,7 +130,7 @@ describe('services/getSearchByKey', () => {
 
   it('应在底层请求失败时返回 500', async () => {
     const error = new Error('network failed');
-    mockYCommon.mockRejectedValue(error);
+    mockUCommon.mockRejectedValue(error);
 
     const result = await getSearchByKey({
       params: {
@@ -141,6 +141,7 @@ describe('services/getSearchByKey', () => {
     expect(result).toEqual({
       status: 500,
       body: {
+        code: -1,
         error,
       },
     });

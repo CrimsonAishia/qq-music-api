@@ -1,38 +1,68 @@
 import { AxiosRequestConfig } from 'axios';
+import { BaseServiceParams, BaseServiceResponse } from '../../types/core/request';
 import { logServiceFailure, logServiceRequest, logServiceSuccess } from '../../util/observability';
-import y_common from '../y_common';
+import u_common from '../u_common';
 
-interface SongListDetailParams {
-  method?: string;
-  params?: Record<string, unknown>;
-  option?: AxiosRequestConfig;
+export interface SongListDetailParams extends BaseServiceParams {
+  cookie?: string;
 }
 
-const upstream = '/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg';
+const upstream = 'u.y.qq.com/cgi-bin/musicu.fcg';
 
-export default ({ method = 'get', params = {}, option = {} }: SongListDetailParams) => {
-  const data = Object.assign(params, {
-    format: 'json',
-    outCharset: 'utf-8',
-    type: 1,
-    json: 1,
-    utf8: 1,
-    onlysong: 0,
-    new_format: 1,
-  });
-  const options = Object.assign(option, {
-    params: data,
-  });
-  logServiceRequest('songListDetail', upstream, data);
-  return y_common({
-    url: upstream,
-    method,
+export default ({ params = {}, cookie }: SongListDetailParams): Promise<BaseServiceResponse> => {
+  const {
+    disstid,
+    song_begin = 0,
+    song_num = 100,
+    onlysonglist = 0,
+  } = params as {
+    disstid?: string | number;
+    song_begin?: number;
+    song_num?: number;
+    onlysonglist?: number;
+  };
+
+  const requestData = {
+    comm: {
+      g_tk: 5381,
+      uin: 0,
+      format: 'json',
+      platform: 'yqq.json',
+      needNewCode: 0,
+    },
+    req_0: {
+      module: 'srf_diss_info.DissInfoServer',
+      method: 'CgiGetDiss',
+      param: {
+        disstid: Number(disstid),
+        onlysonglist: Number(onlysonglist),
+        song_begin: Number(song_begin),
+        song_num: Number(song_num),
+      },
+    },
+  };
+
+  logServiceRequest('songListDetail', upstream, requestData);
+
+  const options: AxiosRequestConfig = {
+    data: requestData,
+    headers: {
+      'Content-Type': 'application/json',
+      Referer: 'https://y.qq.com/',
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    },
+  };
+
+  return u_common({
+    method: 'post',
     options,
+    cookie,
   })
     .then((res: import('axios').AxiosResponse<any>) => {
       const response = res.data;
       logServiceSuccess('songListDetail', upstream, response, {
-        disstid: data.disstid,
+        disstid,
       });
       return {
         status: 200,
@@ -42,7 +72,7 @@ export default ({ method = 'get', params = {}, option = {} }: SongListDetailPara
       };
     })
     .catch((error: unknown) => {
-      logServiceFailure('songListDetail', upstream, error, data);
+      logServiceFailure('songListDetail', upstream, error, requestData);
       return {
         status: 500,
         body: {

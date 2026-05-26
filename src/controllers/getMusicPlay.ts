@@ -6,11 +6,19 @@ const { UCommon } = services;
 // songmid=001yNIo41SJjuC,001wPuVc4ZiMhj
 import { Context } from 'koa';
 import get from 'lodash.get';
-import { _guid, userInfo } from '../config';
+import { _guid, userInfo, vipUserInfo } from '../config';
+import { logger } from '../util/logger';
 
 export default async (ctx: Context) => {
-  const uin = userInfo.uin || '0';
-  const songmid = `${(ctx.query as Record<string, unknown>).songmid}`;
+  // 播放链接使用固定 VIP 账号（需要会员权限）
+  const vipCookie = vipUserInfo?.cookie || '';
+  const uin = vipUserInfo?.uin || userInfo.uin || '0';
+
+  if (!vipCookie) {
+    logger.warn('[getMusicPlay] VIP cookie not configured, playback URLs may be unavailable.');
+  }
+
+  const songmid = `${(ctx.params as Record<string, unknown>).songmid}`;
   // response data only need play url value (all play)
   const justPlayUrl = ((ctx.query as Record<string, unknown>).resType || 'play') === 'play';
   const guid = _guid ? `${_guid}` : '1429839143';
@@ -42,15 +50,6 @@ export default async (ctx: Context) => {
   const fileInfo = fileType[qualityKey];
   const file = songmidList.map((_) => `${fileInfo.s}${_}${mediaId || _}${fileInfo.e}`);
   const data = {
-    // req: {
-    // 	module: 'CDN.SrfCdnDispatchServer',
-    // 	method: 'GetCdnDispatch',
-    // 	param: {
-    // 		guid,
-    // 		calltype: 0,
-    // 		userip: '',
-    // 	},
-    // },
     req_0: {
       module: 'vkey.GetVkeyServer',
       method: 'CgiGetVkey',
@@ -81,6 +80,7 @@ export default async (ctx: Context) => {
     method: 'get',
     params,
     option: {},
+    cookie: vipCookie, // 使用固定 VIP 账号的 cookie
   };
 
   if (songmid) {

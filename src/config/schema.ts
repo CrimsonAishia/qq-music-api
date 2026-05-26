@@ -50,11 +50,22 @@ export const UserSchema = z.object({
   cookieObject: z.record(z.string(), z.string()).optional(),
 });
 
+/**
+ * VIP 固定账号配置，用于需要会员权限的接口（如播放链接、下载）
+ */
+export const VipUserSchema = z
+  .object({
+    cookie: z.string(),
+    uin: z.string(),
+  })
+  .optional();
+
 export const AppConfigSchema = z.object({
   server: ServerSchema,
   request: RequestSchema,
   api: ApiSchema,
   user: UserSchema,
+  vipUser: VipUserSchema,
 });
 
 export type AppConfig = z.infer<typeof AppConfigSchema>;

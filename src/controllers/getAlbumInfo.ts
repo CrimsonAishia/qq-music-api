@@ -6,7 +6,7 @@ const { getAlbumInfo } = services;
 import { Context } from 'koa';
 
 export default async (ctx: Context) => {
-  const { albummid } = ctx.query;
+  const { albummid } = ctx.params;
   const props = {
     method: 'get',
     params: {
